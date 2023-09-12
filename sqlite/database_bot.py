@@ -53,7 +53,7 @@ def balance_update(remains, id_user):  # Обновляет баланс пер�
         query = "UPDATE user SET money = ? WHERE id_person = ?;"
         cursor.execute(query, (remains, id_user,))
         conn.commit()
-        return cursor.fetchall()  # удалить?
+        return cursor.fetchall()
 
 
 def quote():  # показывает котировки всех монет (токенов)
@@ -109,4 +109,3 @@ def delete_count_money(id_user, id_money):  # Удаляет количеств�
         cursor.execute(delete_query, (id_user, id_money,))
         conn.commit()
     return cursor.fetchall()
-

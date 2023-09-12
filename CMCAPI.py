@@ -1,9 +1,9 @@
 from requests import Session
 import json
-import config
-import database
+from config_data import config
+from sqlite import database_bot
 import time
-import schedule
+
 
 api_key = config.API_KEY
 url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
@@ -61,7 +61,8 @@ def run_code():
     atom = round(price_cosmos, 2)
     xrp = round(price_xrp, 2)
     roster_price = [btc, eth, sol, atom, xrp]
-    database.price_update(roster_price)  # передает в функцию (БД) "price_update", обновляет котировки на токены
+    print(roster_price)
+    database_bot.price_update(roster_price)  # передает в функцию (БД) "price_update", обновляет котировки на токены
 
 
 def run_every_2_hours():
@@ -71,6 +72,8 @@ def run_every_2_hours():
 
 
 run_every_2_hours()
+
+# database_bot.price_update([25800.32, 1579.52, 18.02, 6.41, 0.47])
 
 # {'id': 1, 'name': 'Bitcoin', 'symbol': 'BTC', 'slug': 'bitcoin'
 # {'id': 1027, 'name': 'Ethereum', 'symbol': 'ETH', 'slug': 'ethereum'
