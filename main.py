@@ -80,11 +80,10 @@ def get_text_messages(message):
         bot.send_message(message.chat.id, str(roster_coin))
 
     elif message.text == '\U0001F3C6ТОП100':
-        text = f'ТОП100 показывает только наличие USDT!\n' \
+        text = f'ТОП100 показывает капитализацию всех Ваших монет!\n' \
                f'*Место \U0001F3C5| Никнейм \U0001F3A9 | Cостояние\U0001F4B5 | *'
-
         bot.send_message(message.chat.id, text, parse_mode='Markdown')
-        roster_top = '\n'.join([f'{str(index+1)}.   {str(column[1]): ^15}  {str(round(column[2],2))}$'
+        roster_top = '\n'.join([f'{str(index+1)}.   {str(column[1]): ^15}  {str(round(column[3], 4))}$'
                                 for index, column in enumerate(database_bot.top_person())])
         bot.send_message(message.chat.id, str(roster_top))
 

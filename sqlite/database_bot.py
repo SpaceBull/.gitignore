@@ -15,8 +15,10 @@ def start(id_person, name_person):  # Функция проверяет есть
 def registration(id_person, name):  # Добавляет в БД нового участника и даёт ему 1000$
     with sqlite3.connect('sqlite/database.db') as conn:
         cursor = conn.cursor()
-        query = "INSERT INTO user (name, money, id_person) VALUES (?, 1000, ?);"
-        cursor.execute(query, (name, id_person))
+        query_q = "INSERT INTO user (name, id_person) VALUES (?, ?);"  ###############################################
+        cursor.execute(query_q, (name, id_person,))
+        query = "INSERT INTO wallet (id_user, id_money, count) VALUES (?, 6, 1000);"
+        cursor.execute(query, (id_person,))
         conn.commit()
     return cursor.fetchall()
 
@@ -24,7 +26,15 @@ def registration(id_person, name):  # Добавляет в БД нового у
 def top_person():  # Выводит ТОП100 участников богатейших из БД
     with sqlite3.connect('sqlite/database.db') as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM user ORDER BY money DESC LIMIT 100;")
+        query_q = "UPDATE user" \
+                  " SET top_money = (" \
+                  " SELECT SUM(wallet.count * money.price)" \
+                  " FROM wallet" \
+                  " JOIN money ON wallet.id_money = money.id" \
+                  " WHERE user.id_person = wallet.id_user);"
+        cursor.execute(query_q)
+        conn.commit()
+        cursor.execute("SELECT * FROM user ORDER BY top_money DESC LIMIT 100;")
         return cursor.fetchall()
 
 
@@ -42,15 +52,15 @@ def price_update(data_price):  # Обновляет цены на монеты �
 def balance(id_user):  # Показывает баланс в Профиле (данные из БД)
     with sqlite3.connect('sqlite/database.db') as conn:
         cursor = conn.cursor()
-        query = "SELECT money FROM user WHERE id_person = ?;"
-        cursor.execute(query, (id_user,))
-        return cursor.fetchall()
+        query = "SELECT SUM(count) FROM wallet WHERE id_money = 6 AND id_user = ?;"  ##################
+        cursor.execute(query, (id_user, ))
+    return cursor.fetchall()
 
 
 def balance_update(remains, id_user):  # Обновляет баланс персонажа
     with sqlite3.connect('sqlite/database.db') as conn:
         cursor = conn.cursor()
-        query = "UPDATE user SET money = ? WHERE id_person = ?;"
+        query = "UPDATE wallet SET count = ? WHERE id_money = 6 AND id_user = ?;"  ##################
         cursor.execute(query, (remains, id_user,))
         conn.commit()
         return cursor.fetchall()
